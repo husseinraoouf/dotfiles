@@ -77,11 +77,11 @@
       },
       "locked": {
         "narHash": "sha256-1/fiCgmTFB9DvlOxNRZN+mVhuOXPEYfa5FkGC6lQhIY=",
-        "path": "/nix/store/4y4h14yidzqbis7gnrs3cq18jwyzzan5-source/repo",
+        "path": "/nix/store/8scq067r8y3is6v5sf1km1ky2c5zcadx-source/repo",
         "type": "path"
       },
       "original": {
-        "path": "/nix/store/4y4h14yidzqbis7gnrs3cq18jwyzzan5-source/repo",
+        "path": "/nix/store/8scq067r8y3is6v5sf1km1ky2c5zcadx-source/repo",
         "type": "path"
       }
     },

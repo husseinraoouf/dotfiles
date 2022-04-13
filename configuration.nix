@@ -134,10 +134,11 @@ in
     ])
 
     unstable.git
-    nodejs
-    nodePackages.node-gyp
-    nodePackages.node-gyp-build
-    nodePackages.node-pre-gyp
+    unstable.nodejs
+    unstable.nodePackages.node-gyp
+    unstable.nodePackages.node-gyp-build
+    unstable.nodePackages.node-pre-gyp
+    unstable.yarn
 
     unstable.go
 
@@ -209,6 +210,13 @@ in
     # nvidia-offload
 
     nixpkgs-fmt
+  
+    wireguard 
+    wireguard-tools
+
+    unstable.mullvad
+    unstable.mullvad-vpn
+
   ];
 
   environment.variables.JAVA_HOME = pkgs.jdk.home;
@@ -260,7 +268,6 @@ in
 
   # Optionally, you may need to select the appropriate driver version for your specific GPU.
   # hardware.nvidia.package = config.boot.kernelPackages.nvidiaPackages.stable;
-
 
   services.samba = {
     enable = true;
@@ -316,5 +323,45 @@ in
   boot.kernelPackages = pkgs.linuxPackages_latest;
 
   security.sudo.wheelNeedsPassword = false;
+
+
+  # networking.wireguard.interfaces = {
+  #   # "wg0" is the network interface name. You can name the interface arbitrarily.
+  #   wg0 = {
+  #     # Determines the IP address and subnet of the client's end of the tunnel interface.
+  #     ips = [ "10.67.163.188/32" "fc00:bbbb:bbbb:bb01::4:a3bb/128" ];
+  #     listenPort = 51820; # to match firewall allowedUDPPorts (without this wg uses random port numbers)
+
+  #     # Path to the private key file.
+  #     #
+  #     # Note: The private key can also be included inline via the privateKey option,
+  #     # but this makes the private key world-readable; thus, using privateKeyFile is
+  #     # recommended.
+  #     # privateKeyFile = "path to private key file";
+  #     privateKey = "uCfyUjQboFFeLqT1QS1dZN6GA0cdFCckyq3MO+mzN3s=";
+
+  #     peers = [
+  #       # For a client configuration, one peer entry for the server will suffice.
+
+  #       {
+  #         # Public key of the server (not a file path).
+  #         publicKey = "fOrw0hU1D3Wc2A7AsLVdozlDlxwYOHZo6ZJ9OiNmGxU=";
+  #         # presharedKey = "6MemasSoZYn/7zydMFYuXF7uw7J5QPPoSQVKW744mBM=";
+
+  #         # Forward all the traffic via VPN.
+  #         # allowedIPs = [ "0.0.0.0/0" "::/0" ];
+  #         allowedIPs = [ "0.0.0.0/0" "::/0" ];
+  #         # Or forward only particular subnets
+  #         #allowedIPs = [ "10.100.0.1" "91.108.12.0/22" ];
+
+  #         # Set this to the server IP and port.
+  #         endpoint = "138.199.15.162:51820"; # ToDo: route to endpoint not automatically configured https://wiki.archlinux.org/index.php/WireGuard#Loop_routing https://discourse.nixos.org/t/solved-minimal-firewall-setup-for-wireguard-client/7577
+
+  #         # Send keepalives every 25 seconds. Important to keep NAT tables alive.
+  #         persistentKeepalive = 25;
+  #       }
+  #     ];
+  #   };
+  # };
 }
 
