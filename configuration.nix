@@ -1,17 +1,9 @@
+
 # Edit this configuration file to define what should be installed on
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
 { config, pkgs, ... }:
-let
-  nvidia-offload = pkgs.writeShellScriptBin "nvidia-offload" ''
-    export __NV_PRIME_RENDER_OFFLOAD=1
-    export __NV_PRIME_RENDER_OFFLOAD_PROVIDER=NVIDIA-G0
-    export __GLX_VENDOR_LIBRARY_NAME=nvidia
-    export __VK_LAYER_NV_optimus=NVIDIA_only
-    exec -a "$0" "$@"
-  '';
-in
 {
   imports =
     [
@@ -63,13 +55,15 @@ in
 
 
   # Enable the GNOME Desktop Environment.
-  services.xserver.displayManager.gdm.enable = true;
-  services.xserver.displayManager.gdm.settings = {
-    daemon = {
-      DefaultSession = "gnome-xorg.desktop";
-    };
+  services.xserver.displayManager.gdm = {
+    enable = true;
+    wayland = false;
+    nvidiaWayland = false;
   };
-  services.xserver.desktopManager.gnome.enable = true;
+  services.xserver.displayManager.defaultSession = "gnome-xorg";
+  services.xserver.desktopManager.gnome = {
+    enable = true;
+  };
 
 
   # Configure keymap in X11
@@ -108,6 +102,8 @@ in
   };
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
+  # services.xserver.displayManager.autoLogin.enable = false;
+  # users.mutableUsers = false;
   users.users.hussein = {
     isNormalUser = true;
     hashedPassword = "$6$CiJDXxbrXukW526d$NAoLD6myNmyU85wxQJfWu2N6IC1z9r/bdeAxxLvWyi0JprntpRzggxl6pH/kQrkqgjxo0/wtnkvAQfQrdTYuR1";
@@ -163,8 +159,6 @@ in
 
     rpi-imager
 
-    # nuget-to-nix
-
     postman
 
     pkgs.unixODBC
@@ -207,8 +201,6 @@ in
     unstable.mongodb-compass
     gparted
 
-    # nvidia-offload
-
     nixpkgs-fmt
   
     wireguard 
@@ -217,6 +209,12 @@ in
     unstable.mullvad
     unstable.mullvad-vpn
 
+    unstable.bottles
+
+    lshw
+    busybox
+
+    ngrok
   ];
 
   environment.variables.JAVA_HOME = pkgs.jdk.home;
@@ -246,23 +244,67 @@ in
 
   programs.adb.enable = true;
 
+#  hardware.nvidia.modesetting.enable = true;
+#  # hardware.nvidia.powerManagement.enable = true;
+#  hardware.nvidia.nvidiaPersistenced = true;
+#  services.xserver = {
+#    videoDrivers = [ "nvidia" ];
+  #  config = ''
+  #   Section "OutputClass"
+  #     Identifier "nvidia"
+  #     MatchDriver "nvidia-drm"
+  #     Driver "nvidia"
+  #     Option "AllowEmptyInitialConfiguration"
+  #     # ModulePath "/usr/lib/x86_64-linux-gnu/nvidia/xorg"
+  #   EndSection
 
-  services.xserver.displayManager.gdm.wayland = false;
-  # services.xserver.displayManager.gdm.nvidiaWayland = true;
-  # programs.xwayland.enable = true;
+  #   Section "Device"
+  #     Identifier  "Intel Graphics"
+  #     Driver      "intel"
+  #     #Option      "AccelMethod"  "sna" # default
+  #     #Option      "AccelMethod"  "uxa" # fallback
+  #     Option      "TearFree"        "true"
+  #     Option      "SwapbuffersWait" "true"
+  #     BusID       "PCI:0:2:0"
+  #     #Option      "DRI" "2"             # DRI3 is now default
+  #   EndSection
 
-  # hardware.nvidia.modesetting.enable = true;
-  # services.xserver.videoDrivers = [ "nvidia" ];
+  #   Section "Device"
+  #     Identifier "nvidia"
+  #     Driver "nvidia"
+  #     BusID "PCI:1:0:0"
+  #     Option "AllowEmptyInitialConfiguration"
+  #   EndSection
+  #  '';
 
-  # hardware.nvidia.prime = {
-  #   offload.enable = true;
+  #   screenSection = ''
+  #     Identifier     "Screen0"
+  #     Device         "Device0"
+  #     Monitor        "Monitor0"
+  #     DefaultDepth   24
+  #     Option         "Stereo" "0"
+  #     Option         "nvidiaXineramaInfoOrder" "DFP-5"
+  #     Option         "metamodes" "nvidia-auto-select +0+0 {ForceCompositionPipeline=On, ForceFullCompositionPipeline=On}"
+  #     # Option         "AllowIndirectGLXProtocol" "off"
+  #     # Option         "TripleBuffer" "on"
+  #     Option         "SLI" "Off"
+  #     Option         "MultiGPU" "Off"
+  #     Option         "BaseMosaic" "off"
+  #     SubSection     "Display"
+  #     Depth          24
+  #     EndSubSection
+  #   '';
+#  };
 
-  #   # Bus ID of the Intel GPU. You can find it using lspci, either under 3D or VGA
-  #   intelBusId = "PCI:00:02:0";
+#  hardware.nvidia.prime = {
+#    sync.enable = true;
 
-  #   # Bus ID of the NVIDIA GPU. You can find it using lspci, either under 3D or VGA
-  #   nvidiaBusId = "PCI:01:00:0";
-  # };
+#    # Bus ID of the NVIDIA GPU. You can find it using lspci, either under 3D or VGA
+#    nvidiaBusId = "PCI:1:0:0";
+
+#    # Bus ID of the Intel GPU. You can find it using lspci, either under 3D or VGA
+#    intelBusId = "PCI:0:2:0";
+#  };
 
   hardware.opengl.enable = true;
 
@@ -319,7 +361,7 @@ in
   networking.firewall.enable = false;
 
   nixpkgs.config.allowUnfree = true;
-  boot.kernelModules = [ "binder_linux" ];
+  # boot.kernelModules = [ "binder_linux" ];
   boot.kernelPackages = pkgs.linuxPackages_latest;
 
   security.sudo.wheelNeedsPassword = false;

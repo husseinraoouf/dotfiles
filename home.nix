@@ -21,7 +21,7 @@ in
   programs.vscode = {
     enable = true;
     package = pkgs.vscode;
-    extensions = [ repo.packages.x86_64-linux.ms-dotnettools.csharp ] ++ pkgs.vscode-utils.extensionsFromVscodeMarketplace vscode-extenstions.extensions;
+    extensions = [ repo.packages.x86_64-linux.ms-dotnettools.csharp pkgs.vscode-extensions.ms-vsliveshare.vsliveshare ] ++ pkgs.vscode-utils.extensionsFromVscodeMarketplace vscode-extenstions.extensions;
     keybindings = [ ];
     # mutableExtensionsDir = true;
     userSettings = builtins.fromJSON ''
